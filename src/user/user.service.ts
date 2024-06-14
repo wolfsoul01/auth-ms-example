@@ -66,11 +66,6 @@ export class UserService {
           Images: {
             select: imagesUser,
           },
-          ListUserAddresses: {
-            select: {
-              Addresses: true,
-            },
-          },
         },
       });
 
