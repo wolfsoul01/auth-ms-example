@@ -4,6 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'prisma/prisma.service';
 import { userFullReturn } from './entities/user.scope';
 import { handleError } from 'src/common/handelError';
+import { FindAllUsersQueryDto } from './dto/query-user.dto';
 
 @Injectable()
 export class UserService {
@@ -16,10 +17,25 @@ export class UserService {
     return 'This action adds a new user';
   }
 
-  findAll() {
-    return this.prisma.users.findMany({
+  async findAll(query: FindAllUsersQueryDto) {
+    const { page = 0, limit = 10 } = query;
+
+    
+
+    const users = await this.prisma.users.findMany({
+      skip: (page - 1) * limit,
+      take: limit,
       select: userFullReturn,
     });
+
+    const total = await this.prisma.users.count();
+
+    return {
+      total: total,
+      page,
+      limit,
+      data: users,
+    };
   }
 
   async findOne(id: number) {

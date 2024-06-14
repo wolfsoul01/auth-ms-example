@@ -41,9 +41,16 @@ export class AuthService {
         throw new UnauthorizedException('Contraseña incorrecta.');
       }
 
-      const payload = { sub: user.id, username: user.username };
+      if (!user.isEmailConfirmed) {
+        throw new UnauthorizedException(
+          'Por favor verifique la confirmación de su correo.',
+        );
+      }
+
+      const payload = { userId: user.id, username: user.username };
       return {
         access_token: await this.jwtService.signAsync(payload),
+        refresh_toke: await this.jwtService.signAsync(payload),
       };
     } catch (error) {
       handleError(error, this.logger);

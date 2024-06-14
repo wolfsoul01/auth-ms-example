@@ -7,13 +7,21 @@ import {
   Param,
   Delete,
   UseGuards,
+  Req,
+  Query,
 } from '@nestjs/common';
 
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { Request } from 'express';
+import { Users } from '@prisma/client';
+import { FindAllUsersQueryDto } from './dto/query-user.dto';
 
+interface CustomerRequest extends Request {
+  user: Users;
+}
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -25,8 +33,11 @@ export class UserController {
 
   @Get()
   @UseGuards(AuthGuard)
-  findAll() {
-    return this.userService.findAll();
+  findAll(
+    @Query() findAllDto: FindAllUsersQueryDto,
+    //    @Req() request: CustomerRequest,
+  ) {
+    return this.userService.findAll(findAllDto);
   }
 
   @Get(':id')
