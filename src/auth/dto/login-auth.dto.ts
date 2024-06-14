@@ -1,4 +1,4 @@
-import { IsEmail, MinLength } from 'class-validator';
+import { IsEmail, IsOptional, MinLength } from 'class-validator';
 
 export class LoginDto {
   @IsEmail({}, { message: `Debe proporcionar un correo valido` })
@@ -8,4 +8,7 @@ export class LoginDto {
     message: 'La contraseña debe tener un mínimo de 4 caracteres',
   })
   password: string;
+
+  @IsOptional()
+  origin?: string;
 }

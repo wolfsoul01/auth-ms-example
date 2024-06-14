@@ -5,13 +5,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { PrismaPromise } from '@prisma/client';
+import { compare } from 'bcrypt';
 
-import { LoginDto } from './dto/login-auth.dto';
-import { UpdateAuthDto } from './dto/register-auth.dto';
 import { handleError } from 'src/common/handelError';
 import { PrismaService } from 'prisma/prisma.service';
-import { compare } from 'bcrypt';
-import { PrismaPromise } from '@prisma/client';
+import { LogOutDto, LoginDto } from './dto';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -20,9 +20,9 @@ export class AuthService {
   ) {}
 
   private readonly logger = new Logger('Auth-Service');
-  async login(loginDto: LoginDto, origin: string) {
+  async login(loginDto: LoginDto) {
     try {
-      const { email, password } = loginDto;
+      const { email, password, origin } = loginDto;
       const transactions: PrismaPromise<any>[] = [];
       const user = await this.prisma.users.findFirst({
         where: {
@@ -81,19 +81,9 @@ export class AuthService {
     }
   }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  async logout(logOutDto: LogOutDto) {
+    const { origin } = logOutDto;
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
-
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return updateAuthDto;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    return origin;
   }
 }
