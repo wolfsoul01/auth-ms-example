@@ -5,10 +5,12 @@ import {
   Req,
   UnauthorizedException,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login-auth.dto';
 import { CustomerRequest } from 'src/interface/global';
+import { AuthGuard } from './auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -27,7 +29,8 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
-  @Delete('logOut')
+  @Delete('logout')
+  @UseGuards(AuthGuard)
   logOut(@Req() request: CustomerRequest) {
     const logOutDto = {
       origin: request.origin,
