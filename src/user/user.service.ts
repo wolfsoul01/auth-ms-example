@@ -18,9 +18,7 @@ export class UserService {
   }
 
   async findAll(query: FindAllUsersQueryDto) {
-    const { page = 0, limit = 10 } = query;
-
-    
+    const { page = 1, limit = 10 } = query;
 
     const users = await this.prisma.users.findMany({
       skip: (page - 1) * limit,

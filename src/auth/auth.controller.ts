@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UpdateAuthDto } from './dto/register-auth.dto';
@@ -16,8 +18,14 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  login(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
+  login(@Body() loginDto: LoginDto, @Req() request: Request) {
+    const origin = request.headers['x-app-origin'];
+
+    if (!origin) {
+      throw new UnauthorizedException('Origen no encontrado.');
+    }
+
+    return this.authService.login(loginDto, origin);
   }
 
   @Get()

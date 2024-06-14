@@ -113,8 +113,8 @@ model Tokens {
   token          String           @db.VarChar(255)
   origin         String           @db.VarChar(255)
   userId         Int
-  createdAt      DateTime         @db.Timestamptz(6)
-  updatedAt      DateTime         @db.Timestamptz(6)
+  createdAt      DateTime         @db.Timestamptz(6) @default(now()) 
+  updatedAt      DateTime         @db.Timestamptz(6)  @updatedAt()
   Users          Users            @relation(fields: [userId], references: [id], onDelete: Cascade)
   TrustedDevices TrustedDevices[]
 }
