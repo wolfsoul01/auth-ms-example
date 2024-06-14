@@ -85,29 +85,23 @@ export class AuthService {
 
   async logout(logOutDto: LogOutDto) {
     const { origin, userId } = logOutDto;
-    try {
-      await this.prisma.tokens.deleteMany({
-        where: {
-          userId: +userId,
-          origin,
-        },
-      });
+    await this.prisma.tokens.deleteMany({
+      where: {
+        userId: +userId,
+        origin,
+      },
+    });
 
-      await this.prisma.users.update({
-        data: {
-          isLogued: false,
-        },
-        where: {
-          id: +userId,
-        },
-      });
+    await this.prisma.users.update({
+      data: {
+        isLogued: false,
+      },
+      where: {
+        id: +userId,
+      },
+    });
 
-      return {};
-    } catch (error) {
-      handleError(error, this.logger);
-    }
-
-    return origin;
+    return;
   }
 
   async isTokenValid(isTokenValidDto: IsTokenValidDto) {

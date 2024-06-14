@@ -6,6 +6,7 @@ import {
   UnauthorizedException,
   Delete,
   UseGuards,
+  Res,
 } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
@@ -13,6 +14,8 @@ import { CustomerRequest } from 'src/interface/global';
 import { AuthGuard } from '../common/guards/auth.guard';
 import { LogOutDto, LoginDto } from './dto';
 import { IsTokenValidDto } from './dto/token-valid.dto';
+import { Response } from 'express';
+import { handleError } from 'src/common/handelError';
 
 @Controller('auth')
 export class AuthController {
@@ -33,12 +36,17 @@ export class AuthController {
 
   @Delete('logout')
   @UseGuards(AuthGuard)
-  logOut(@Req() request: CustomerRequest) {
+  async logOut(@Req() request: CustomerRequest, @Res() response: Response) {
     const logOutDto: LogOutDto = {
       origin: request.origin,
       userId: request.userId,
     };
-    return this.authService.logout(logOutDto);
+    try {
+      await this.authService.logout(logOutDto);
+      return response.status(204).json();
+    } catch (error) {
+      return handleError(error);
+    }
   }
 
   @Post('check/token')

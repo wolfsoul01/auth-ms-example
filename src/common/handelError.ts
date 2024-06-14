@@ -1,9 +1,13 @@
-import { HttpException, HttpStatus, Logger } from '@nestjs/common';
+import {
+  HttpException,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 
-export function handleError(error: Error, logger?: Logger) {
+export function handleError(error: HttpException, logger?: Logger) {
   logger && logger.log(error);
   throw (
-    error ??
-    new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR)
+    new HttpException(error.message, error.getStatus()) ??
+    new InternalServerErrorException()
   );
 }
