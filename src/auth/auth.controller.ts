@@ -10,7 +10,7 @@ import {
 
 import { AuthService } from './auth.service';
 import { CustomerRequest } from 'src/interface/global';
-import { AuthGuard } from './auth.guard';
+import { AuthGuard } from '../common/guards/auth.guard';
 import { LogOutDto, LoginDto } from './dto';
 import { IsTokenValidDto } from './dto/token-valid.dto';
 

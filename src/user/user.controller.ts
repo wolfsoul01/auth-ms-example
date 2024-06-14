@@ -14,14 +14,18 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from 'src/common/guards/auth.guard';
 import { FindAllUsersQueryDto } from './dto/query-user.dto';
 import { getUserDto } from './dto';
 import { CustomerRequest } from 'src/interface/global';
+import { ConfigService } from 'src/common/configs/configs.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly configs: ConfigService,
+  ) {}
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
@@ -38,6 +42,7 @@ export class UserController {
   }
 
   @Get('find')
+  @UseGuards()
   @UseGuards(AuthGuard)
   findAll(@Query() findAllDto: FindAllUsersQueryDto) {
     return this.userService.findAll(findAllDto);

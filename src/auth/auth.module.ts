@@ -4,7 +4,7 @@ import { AuthController } from './auth.controller';
 import { PrismaModule } from 'prisma/primsa.module';
 import { UserModule } from 'src/user/user.module';
 import { JwtModule } from '@nestjs/jwt';
-import { envs } from 'src/configs/env';
+import { envs } from 'src/envs/env';
 
 @Module({
   controllers: [AuthController],
