@@ -1,10 +1,9 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'prisma/prisma.service';
-import { userFullReturn } from './entities/user.scope';
 import { handleError } from 'src/common/handelError';
 import { FindAllUsersQueryDto } from './dto/query-user.dto';
+import { CreateUserDto, UpdateUserDto, getUserDto } from './dto';
+import { imagesUser, userFullReturn } from './entities/user.scope';
 
 @Injectable()
 export class UserService {
@@ -53,6 +52,34 @@ export class UserService {
     } catch (error) {
       handleError(error, this.logger);
     }
+  }
+
+  async getUser(getUserDTo: getUserDto) {
+    const { userId } = getUserDTo;
+    try {
+      const user = await this.prisma.users.findUnique({
+        where: {
+          id: +userId,
+        },
+        select: {
+          ...userFullReturn,
+          Images: {
+            select: imagesUser,
+          },
+          ListUserAddresses: {
+            select: {
+              Addresses: true,
+            },
+          },
+        },
+      });
+
+      if (!user) {
+        throw new NotFoundException('Usuario no encontrado');
+      }
+
+      return user;
+    } catch (error) {}
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
