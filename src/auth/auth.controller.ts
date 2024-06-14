@@ -12,6 +12,7 @@ import { AuthService } from './auth.service';
 import { CustomerRequest } from 'src/interface/global';
 import { AuthGuard } from './auth.guard';
 import { LogOutDto, LoginDto } from './dto';
+import { IsTokenValidDto } from './dto/token-valid.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -38,5 +39,10 @@ export class AuthController {
       userId: request.userId,
     };
     return this.authService.logout(logOutDto);
+  }
+
+  @Post('check/token')
+  isTokenValid(@Body() isTokenValidDto: IsTokenValidDto) {
+    return this.authService.isTokenValid(isTokenValidDto);
   }
 }

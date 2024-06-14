@@ -11,6 +11,8 @@ import { compare } from 'bcrypt';
 import { handleError } from 'src/common/handelError';
 import { PrismaService } from 'prisma/prisma.service';
 import { LogOutDto, LoginDto } from './dto';
+import { IsTokenValidDto } from './dto/token-valid.dto';
+import { userFullReturn } from 'src/user/entities/user.scope';
 
 @Injectable()
 export class AuthService {
@@ -106,5 +108,28 @@ export class AuthService {
     }
 
     return origin;
+  }
+
+  async isTokenValid(isTokenValidDto: IsTokenValidDto) {
+    const { token } = isTokenValidDto;
+    try {
+      const payload = await this.jwtService.decode(token);
+
+      if (!payload) throw new UnauthorizedException('Token no valido.');
+
+      const { userId } = payload;
+      const user = await this.prisma.users.findUnique({
+        where: {
+          id: userId,
+        },
+        select: userFullReturn,
+      });
+
+      if (!user) throw new NotFoundException('Credenciales no validas.');
+
+      return user;
+    } catch (error) {
+      handleError(error, this.logger);
+    }
   }
 }
