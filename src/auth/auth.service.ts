@@ -8,11 +8,10 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaPromise } from '@prisma/client';
 import { compare } from 'bcrypt';
 
-import { handleError } from 'src/common/handelError';
 import { PrismaService } from 'prisma/prisma.service';
 import { LogOutDto, LoginDto } from './dto';
 import { IsTokenValidDto } from './dto/token-valid.dto';
-import { userFullReturn } from 'src/user/entities/user.scope';
+import { handleError } from 'src/common/handleError';
 
 @Injectable()
 export class AuthService {
@@ -116,7 +115,11 @@ export class AuthService {
         where: {
           id: userId,
         },
-        select: userFullReturn,
+        select: {
+          id: true,
+          username: true,
+          email: true,
+        },
       });
 
       if (!user) throw new NotFoundException('Credenciales no validas.');

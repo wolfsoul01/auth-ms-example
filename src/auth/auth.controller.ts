@@ -15,11 +15,15 @@ import { AuthGuard } from '../common/guards/auth.guard';
 import { LogOutDto, LoginDto } from './dto';
 import { IsTokenValidDto } from './dto/token-valid.dto';
 import { Response } from 'express';
-import { handleError } from 'src/common/handelError';
+import { ConfigService } from 'src/common/configs/configs.service';
+import { handleError } from 'src/common/handleError';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly configs: ConfigService,
+  ) {}
 
   @Post('login')
   login(@Body() loginDto: LoginDto, @Req() request: Request) {
