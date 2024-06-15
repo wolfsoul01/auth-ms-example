@@ -20,6 +20,14 @@ export const userFullReturn: PrismaScope<Users> = {
   lastLogin: true,
 };
 
+export const simpleUserReturn: PrismaScope<Users> = {
+  id: true,
+  email: true,
+  username: true,
+  firstName: true,
+  lastName: true,
+};
+
 export const imagesUser: PrismaScope<Images> = {
   id: true,
   src: true,

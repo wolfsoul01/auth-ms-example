@@ -14,8 +14,10 @@ export class ServerToServerController {
     return this.serverToServerService.isTokeValid({ token });
   }
 
-  @Post('checkEmail')
-  checkEmail() {}
+  @Post('email')
+  checkEmail(@Body('email') email: string) {
+    return this.serverToServerService.checkEmail(email);
+  }
 
   @Get('getUserByServer')
   getUserByServer() {}

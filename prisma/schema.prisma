@@ -136,7 +136,7 @@ model TrustedDevices {
 model Users {
   id                Int                 @id @default(autoincrement())
   username          String              @db.VarChar(255)
-  email             String?             @db.VarChar(255)
+  email             String?             @db.VarChar(255) @unique
   password          String?             @db.VarChar(255)
   pinPassword       String?             @db.VarChar(255)
   isActive          Boolean?            @default(false)
