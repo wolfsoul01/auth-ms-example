@@ -1,7 +1,12 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
-import { FindAllUsersQueryDto } from './dto/query-user.dto';
-import { CreateUserDto, UpdateUserDto, getUserDto } from './dto';
+
+import {
+  CreateUserDto,
+  FindAllUsersQueryDto,
+  UpdateUserDto,
+  getUserDto,
+} from './dto';
 import { imagesUser, userFullReturn } from './entities/user.scope';
 import { handleError } from 'src/common/handleError';
 
