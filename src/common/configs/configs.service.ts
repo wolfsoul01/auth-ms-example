@@ -1,7 +1,6 @@
 import { Global, Injectable } from '@nestjs/common';
 import { GeneralConfigs } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
-import { GeneralConfigKey } from 'src/interface/global';
 interface GeneralConfig {
   key: string;
   value: string;
@@ -14,7 +13,7 @@ export class ConfigService {
     return ['Tecopos', 'Tecopos-Admin'];
   }
 
-  getConfig(key: GeneralConfigKey, origin?: string) {
+  getConfig(key: string, origin?: string) {
     const where: Partial<GeneralConfigs> = {};
 
     if (origin) where.origin = origin;
