@@ -19,7 +19,9 @@ import { FindAllUsersQueryDto } from './dto/query-user.dto';
 import { getUserDto } from './dto';
 import { CustomerRequest } from 'src/interface/global';
 import { ConfigService } from 'src/common/configs/configs.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('usuarios')
 @Controller('user')
 export class UserController {
   constructor(

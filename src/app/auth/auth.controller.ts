@@ -8,6 +8,7 @@ import {
   UseGuards,
   Res,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
 import { CustomerRequest } from 'src/interface/global';
@@ -17,7 +18,7 @@ import { IsTokenValidDto } from './dto/token-valid.dto';
 import { Response } from 'express';
 import { ConfigService } from 'src/common/configs/configs.service';
 import { handleError } from 'src/common/handleError';
-
+@ApiTags('Login')
 @Controller('auth')
 export class AuthController {
   constructor(
