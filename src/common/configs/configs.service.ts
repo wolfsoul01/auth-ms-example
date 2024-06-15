@@ -1,5 +1,7 @@
 import { Global, Injectable } from '@nestjs/common';
+import { GeneralConfigs } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
+import { GeneralConfigKey } from 'src/interface/global';
 interface GeneralConfig {
   key: string;
   value: string;
@@ -12,10 +14,16 @@ export class ConfigService {
     return ['Tecopos', 'Tecopos-Admin'];
   }
 
-  getEmail() {
+  getConfig(key: GeneralConfigKey, origin?: string) {
+    const where: Partial<GeneralConfigs> = {};
+
+    if (origin) where.origin = origin;
+
     return this.prisma.generalConfigs.findFirst({
       where: {
-        key: 'server_origin_key',
+        key,
+        isPublic: false,
+        ...where,
       },
     });
   }
