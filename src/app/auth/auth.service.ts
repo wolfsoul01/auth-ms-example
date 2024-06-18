@@ -12,6 +12,7 @@ import { PrismaService } from 'prisma/prisma.service';
 import { LogOutDto, LoginDto } from './dto';
 import { IsTokenValidDto } from './dto/token-valid.dto';
 import { handleError } from 'src/common/handleError';
+import { envs } from 'src/envs/env';
 
 @Injectable()
 export class AuthService {
@@ -61,6 +62,10 @@ export class AuthService {
       const payload = { userId: user.id, origin };
 
       const token = await this.jwtService.signAsync(payload);
+      const refresh_token = await this.jwtService.signAsync(payload, {
+        secret: envs.JWT_REFRESH_PK,
+        expiresIn: '30d',
+      });
 
       transactions.push(
         this.prisma.tokens.create({
@@ -71,11 +76,13 @@ export class AuthService {
           },
         }),
       );
+
+      //Ejecute transactions
       await this.prisma.$transaction(transactions);
 
       return {
         access_token: token,
-        refresh_toke: await this.jwtService.signAsync(payload),
+        refresh_token,
       };
     } catch (error) {
       handleError(error, this.logger);
