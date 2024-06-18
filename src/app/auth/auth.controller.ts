@@ -8,7 +8,7 @@ import {
   UseGuards,
   Res,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
 import { CustomerRequest } from 'src/interface/global';
@@ -18,6 +18,7 @@ import { IsTokenValidDto } from './dto/token-valid.dto';
 import { Response } from 'express';
 import { ConfigService } from 'src/common/configs/configs.service';
 import { handleError } from 'src/common/handleError';
+import { originHeader } from 'src/common/swagger/swagger-helper';
 @ApiTags('Login')
 @Controller('auth')
 export class AuthController {
@@ -26,6 +27,7 @@ export class AuthController {
     private readonly configs: ConfigService,
   ) {}
 
+  @ApiHeader(originHeader)
   @Post('login')
   login(@Body() loginDto: LoginDto, @Req() request: Request) {
     const origin = request.headers['x-app-origin'] as string;
@@ -39,8 +41,9 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
-  @Delete('logout')
   @UseGuards(AuthGuard)
+  @ApiHeader(originHeader)
+  @Delete('logout')
   async logOut(@Req() request: CustomerRequest, @Res() response: Response) {
     const logOutDto: LogOutDto = {
       origin: request.origin,
@@ -54,6 +57,7 @@ export class AuthController {
     }
   }
 
+  @ApiHeader(originHeader)
   @Post('check/token')
   isTokenValid(@Body() isTokenValidDto: IsTokenValidDto) {
     return this.authService.isTokenValid(isTokenValidDto);
