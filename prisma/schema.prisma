@@ -113,8 +113,8 @@ model Tokens {
   token          String           @db.VarChar(255)
   origin         String           @db.VarChar(255)
   userId         Int
-  createdAt      DateTime         @db.Timestamptz(6) @default(now()) 
-  updatedAt      DateTime         @db.Timestamptz(6)  @updatedAt()
+  createdAt      DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime         @updatedAt() @db.Timestamptz(6)
   Users          Users            @relation(fields: [userId], references: [id], onDelete: Cascade)
   TrustedDevices TrustedDevices[]
 }
@@ -135,8 +135,8 @@ model TrustedDevices {
 
 model Users {
   id                Int                 @id @default(autoincrement())
-  username          String              @db.VarChar(255)
-  email             String?             @db.VarChar(255) @unique
+  username          String              @unique @db.VarChar(255)
+  email             String?             @unique @db.VarChar(255)
   password          String?             @db.VarChar(255)
   pinPassword       String?             @db.VarChar(255)
   isActive          Boolean?            @default(false)
@@ -149,8 +149,8 @@ model Users {
   phone             String?             @db.VarChar(255)
   sex               String?             @db.VarChar(255)
   birthdate         DateTime?           @db.Timestamptz(6)
-  createdAt         DateTime            @db.Timestamptz(6)
-  updatedAt         DateTime            @db.Timestamptz(6)
+  createdAt         DateTime            @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime            @updatedAt @db.Timestamptz(6)
   deletedAt         DateTime?           @db.Timestamptz(6)
   displayName       String?             @db.VarChar
   Images            Images[]
