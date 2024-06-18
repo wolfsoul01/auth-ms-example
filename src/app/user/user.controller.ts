@@ -19,9 +19,9 @@ import { FindAllUsersQueryDto } from './dto/query-user.dto';
 import { getUserDto } from './dto';
 import { CustomerRequest } from 'src/interface/global';
 import { ConfigService } from 'src/common/configs/configs.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-@ApiTags('usuarios')
+@ApiTags('Usuarios')
 @Controller('user')
 export class UserController {
   constructor(
@@ -29,7 +29,8 @@ export class UserController {
     private readonly configs: ConfigService,
   ) {}
 
-  @Post()
+  @ApiOperation({ summary: 'Registrar usuarios' })
+  @Post('register')
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }

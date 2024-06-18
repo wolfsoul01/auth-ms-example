@@ -1,5 +1,12 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 
 import {
   CreateUserDto,
@@ -9,20 +16,67 @@ import {
 } from './dto';
 import { imagesUser, userFullReturn } from './entities/user.scope';
 import { handleError } from 'src/common/handleError';
+import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jswService: JwtService,
+  ) {}
 
   logger = new Logger('Users-Service');
 
-  create(createUserDto: CreateUserDto) {
-    console.log(createUserDto);
-    return 'This action adds a new user';
+  async create(createUserDto: CreateUserDto) {
+    const { email, password, pinPassword, username } = createUserDto;
+
+    const newUser: Partial<Prisma.UsersCreateInput> = {};
+
+    if (email) {
+      const isAvailable = await this.checkEmailUser(email);
+
+      if (!isAvailable)
+        throw new ConflictException('Correo electrónico no disponible.');
+
+      newUser.email = email;
+    }
+
+    if (password) {
+      const cryptPassword = await bcrypt.hash(password, 10);
+
+      newUser.password = cryptPassword;
+    }
+
+    if (pinPassword) {
+      if (!/^[0-9]+$/.test(pinPassword)) {
+        throw new BadRequestException('El pin debe contener solo números.');
+      }
+
+      if (pinPassword.length > 6 || pinPassword.length < 4) {
+        throw new BadRequestException(
+          'El PIN solo puede contener entre 4 a 6 dígitos.',
+        );
+      }
+
+      const cryptPinPassword = await bcrypt.hash(pinPassword, 10);
+
+      newUser.pinPassword = cryptPinPassword;
+    }
+
+    if (username) {
+      newUser.username = await this.getUserName(username);
+    }
+    const user = await this.prisma.users.create({
+      data: newUser as Prisma.UsersCreateInput,
+      select: userFullReturn,
+    });
+
+    return user;
   }
 
   async findAll(query: FindAllUsersQueryDto) {
-    const { page = 1, limit = 10 } = query;
+    const { page, limit } = query;
 
     const users = await this.prisma.users.findMany({
       skip: (page - 1) * limit,
@@ -89,5 +143,38 @@ export class UserService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  //Helpers service
+  async checkEmailUser(email: string): Promise<boolean> {
+    const emailAvailable = await this.prisma.users.findFirst({
+      where: {
+        email,
+      },
+    });
+
+    if (emailAvailable) {
+      return false;
+    }
+
+    return true;
+  }
+
+  generateJwtVerify(payload: Record<string, string | number>) {
+    return this.jswService.sign(payload, { expiresIn: '1d' });
+  }
+
+  async getUserName(username: string): Promise<string> {
+    const user = await this.prisma.users.findUnique({
+      where: {
+        username,
+      },
+    });
+
+    if (user) {
+      return username + `_${Math.floor(Math.random() * (999 - 100 + 1) + 100)}`;
+    }
+
+    return username;
   }
 }
