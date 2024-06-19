@@ -25,10 +25,12 @@ export class ServerToServerController {
   }
 
   @Post('email')
+  @UseGuards(ServerAccessGuard)
   checkEmail(@Body('email') email: string) {
     return this.serverToServerService.checkEmail(email);
   }
-
+  @UseGuards(new OriginValidatorGuard(['Tecopos-Server', 'Tecopay-Server']))
+  @UseGuards(ServerAccessGuard)
   @Get('user/:id')
   getUserByServer(@Param('id', ParseIntPipe) id: number) {
     return this.serverToServerService.getUser(id);
