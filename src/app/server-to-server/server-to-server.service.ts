@@ -68,4 +68,19 @@ export class ServerToServerService {
       handleError(error);
     }
   }
+
+  async getUser(id: number) {
+    const user = await this.primsa.users.findUnique({
+      where: {
+        id,
+      },
+      select: simpleUserReturn,
+    });
+
+    if (!user) {
+      throw new NotFoundException('No se a encontrado al usuario solicitado.');
+    }
+
+    return user;
+  }
 }

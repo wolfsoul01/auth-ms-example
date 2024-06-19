@@ -27,7 +27,7 @@ export class AuthController {
     private readonly configs: ConfigService,
   ) {}
 
-  @UseGuards(OriginValidatorGuard)
+ // @UseGuards(OriginValidatorGuard)
   @ApiHeader(originHeader)
   @Post('login')
   login(@Body() loginDto: LoginDto, @Req() request: CustomerRequest) {
