@@ -13,3 +13,22 @@ export enum GeneralConfigKey {
   mail_from = 'mail_from',
   mail_password = 'mail_password',
 }
+
+export type app_origin =
+  | 'Tecopos'
+  | 'Tecopos-Admin'
+  | 'Tecopos-Alma'
+  | 'Tecopos-Shop'
+  | 'Tecopos-Management'
+  | 'Tecopos-Landing'
+  | 'Tecopos-Server'
+  | 'Codyas-Woocommerce'
+  | 'Tecopos-Terminal'
+  | 'Tecopay-Web'
+  | 'Tecopay-App'
+  | 'Tecopay-Server'
+  | 'Tecopay-App'
+  | 'Tecopay-Web'
+  | 'Tecopos-Tickets'
+  | 'Tecopos-Marketplace'
+  | 'Tecopos-Ticket';

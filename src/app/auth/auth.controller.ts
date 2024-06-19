@@ -3,7 +3,6 @@ import {
   Post,
   Body,
   Req,
-  UnauthorizedException,
   Delete,
   UseGuards,
   Res,
@@ -19,6 +18,7 @@ import { Response } from 'express';
 import { ConfigService } from 'src/common/configs/configs.service';
 import { handleError } from 'src/common/handleError';
 import { originHeader } from 'src/common/swagger/swagger-helper';
+import { OriginValidatorGuard } from '../../common/guards/origin-validator.guard';
 @ApiTags('Login')
 @Controller('auth')
 export class AuthController {
@@ -27,14 +27,11 @@ export class AuthController {
     private readonly configs: ConfigService,
   ) {}
 
+  @UseGuards(OriginValidatorGuard)
   @ApiHeader(originHeader)
   @Post('login')
-  login(@Body() loginDto: LoginDto, @Req() request: Request) {
-    const origin = request.headers['x-app-origin'] as string;
-
-    if (!origin) {
-      throw new UnauthorizedException('Origen no encontrado.');
-    }
+  login(@Body() loginDto: LoginDto, @Req() request: CustomerRequest) {
+    const origin = request.origin;
 
     loginDto.origin = origin;
 
