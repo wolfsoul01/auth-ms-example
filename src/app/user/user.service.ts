@@ -18,12 +18,22 @@ import { imagesUser, userFullReturn } from './entities/user.scope';
 import { handleError } from 'src/common/handleError';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { envs } from 'src/envs/env';
+import { firstValueFrom } from 'rxjs';
+import { HttpClientService } from 'src/app/http-client/http-client.service';
+export interface Main {
+  userId: number;
+  id: number;
+  title: string;
+  completed: boolean;
+}
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jswService: JwtService,
+    private readonly httpService: HttpClientService,
   ) {}
 
   logger = new Logger('Users-Service');
@@ -71,6 +81,26 @@ export class UserService {
       data: newUser as Prisma.UsersCreateInput,
       select: userFullReturn,
     });
+
+    if (email) {
+      const payload = { userId: user.id };
+      const expireDate = new Date();
+      expireDate.setDate(expireDate.getDate() + 1);
+
+      const verifyToken = this.jswService.sign(payload, {
+        expiresIn: '1d',
+        secret: envs.JWT_PK,
+      });
+
+      const url = `http://localhost:3006/api/v1/email/verify-account`;
+      const body = {
+        to: email,
+        subject: 'Bienvenido',
+        password: password,
+        token: verifyToken,
+      };
+      firstValueFrom(this.httpService.post<void>(url, body));
+    }
 
     return user;
   }
